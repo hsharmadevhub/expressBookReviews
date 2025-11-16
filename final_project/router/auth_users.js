@@ -42,9 +42,35 @@ regd_users.post("/login", (req,res) => {
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  if (!req.query.review) {
+    return res.status(404).json({message: "review must be provided in query params"});
+  }
+
+  const book = books[req.params.isbn];
+
+  if (!book) {
+    return res.status(404).json({message: "Book not found"});
+  }
+
+  book.reviews[req.session.authorization.username] = req.query.review;
+  return res.status(200).json({message: "Review added successfully"});
 });
+
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+  const book = books[req.params.isbn];
+
+  if (!book) {
+    return res.status(404).json({message: "Book not found"});
+  }
+
+  const usersWithReviews = Object.keys(book.reviews);
+  if (!usersWithReviews.includes(req.session.authorization.username)) {
+    return res.status(404).json({message: "No reviews found to delete"});
+  }
+
+  delete book.reviews[req.session.authorization.username];
+  return res.status(200).json({message: "Review deleted successfully"});
+})
 
 module.exports.authenticated = regd_users;
 module.exports.doesUserExist = doesUserExist;
