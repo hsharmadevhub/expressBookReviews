@@ -1,3 +1,3 @@
 # Run the project
-npm install
+npm install<br>
 npm start
