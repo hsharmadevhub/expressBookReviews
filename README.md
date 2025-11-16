@@ -1,1 +1,3 @@
-# coding-project-template
+# Run the project
+npm install
+npm start
